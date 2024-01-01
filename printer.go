@@ -47,7 +47,8 @@ func PrintDocument(filename string, options map[string]string) error {
 	cmd := exec.Command("lp", args...)
 	err := cmd.Run()
 	if err != nil {
-		return fmt.Errorf("failed to print file: %s", err)
+		fmt.Printf(err.Error())
+		return fmt.Errorf("failed to print file: %s", err.Error())
 	}
 
 	fmt.Printf("File %s sent to printer %s with options\n", filename, defaultPrinter)
