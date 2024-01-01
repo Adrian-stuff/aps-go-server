@@ -117,7 +117,7 @@ func getDefaultPrinterHandler(w http.ResponseWriter, r *http.Request) {
 
 	printerName, err := GetDefaultPrinter()
 	if err != nil {
-		http.Error(w, "error getting defualt printer", http.StatusInternalServerError)
+		http.Error(w, "error getting default printer \n"+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -136,7 +136,7 @@ func printDocumentHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO: implement converting the document first
 	pdfPath, errpdf := processDocumentConvert(fileDest)
 	if errpdf != nil {
-		http.Error(w, "error processing document", http.StatusInternalServerError)
+		http.Error(w, "error processing document"+errpdf.Error(), http.StatusInternalServerError)
 		return
 
 	}
@@ -144,7 +144,7 @@ func printDocumentHandler(w http.ResponseWriter, r *http.Request) {
 	err := PrintDocument(pdfPath, map[string]string{"copies": "1"})
 
 	if err != nil {
-		http.Error(w, "error printing", http.StatusInternalServerError)
+		http.Error(w, "error printing"+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
