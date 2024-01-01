@@ -134,8 +134,14 @@ func printDocumentHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// TODO: implement converting the document first
+	pdfPath, errpdf := processDocumentConvert(fileDest)
+	if errpdf != nil {
+		http.Error(w, "error processing document", http.StatusInternalServerError)
+		return
 
-	err := PrintDocument(fileDest, map[string]string{"copies": "1"})
+	}
+
+	err := PrintDocument(pdfPath, map[string]string{"copies": "1"})
 
 	if err != nil {
 		http.Error(w, "error printing", http.StatusInternalServerError)
