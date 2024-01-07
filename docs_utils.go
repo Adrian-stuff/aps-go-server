@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+var recentPdf = ""
+
 func processDocumentConvert(filePath string) (string, error) {
 	// improve this soon TODO:
 	fmt.Println(filePath)
@@ -48,6 +50,7 @@ func ConvertToPdf(filePath string) (string, error) {
 
 	select {
 	case outputPath := <-outputChan:
+		recentPdf = outputPath
 		return outputPath, nil
 	case err := <-errorChan:
 		return "", err
@@ -56,7 +59,7 @@ func ConvertToPdf(filePath string) (string, error) {
 
 type DocumentInfo struct {
 	Paper       string
-	Orientation string
+	Orientation int
 	Pages       int
 }
 
@@ -91,9 +94,11 @@ func parseDocumentInfo(stdout string) (*DocumentInfo, error) {
 		return nil, fmt.Errorf("invalid page count value: %w", err)
 	}
 
-	orientation := "portrait"
+	// orientation := "portrait"
+	orientation := 3
+	//  3 for portrait as it is the convention in cups
 	if width > height {
-		orientation = "landscape"
+		orientation = 4
 	}
 
 	identifiedPaper := "Unknown"
@@ -116,12 +121,12 @@ func getPdfData(filePath string) (*DocumentInfo, error) {
 	cmd := exec.Command("pdfinfo", filePath)
 	stdout, err := cmd.Output()
 	if err != nil {
-		return nil, fmt.Errorf("error executing pdfinfo: %w", err)
+		return nil, fmt.Errorf("error executing pdfinfo: %s", err.Error())
 	}
 
 	result, err := parseDocumentInfo(string(stdout))
 	if err != nil {
-		return nil, fmt.Errorf("error parsing document information: %w", err)
+		return nil, fmt.Errorf("error parsing document information: %s", err.Error())
 	}
 
 	return result, nil

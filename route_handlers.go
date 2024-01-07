@@ -134,14 +134,26 @@ func printDocumentHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// TODO: implement converting the document first
+	// TODO: move this convert process into the preview
 	pdfPath, errpdf := processDocumentConvert(fileDest)
 	if errpdf != nil {
 		http.Error(w, "error processing document"+errpdf.Error(), http.StatusInternalServerError)
 		return
 
 	}
-
-	err := PrintDocument(pdfPath, map[string]string{"copies": "1"})
+	docInfo, errInfo := getPdfData(pdfPath)
+	if errInfo != nil {
+		http.Error(w, "error processing document"+errInfo.Error(), http.StatusInternalServerError)
+		return
+	}
+	// TODO: implement custom config
+	err := PrintDocument(pdfPath,
+		map[string]string{
+			"orientation-requested": fmt.Sprint(docInfo.Orientation),
+			"media":                 docInfo.Paper,
+			"pages-ranges":          fmt.Sprintf("1-%d", docInfo.Pages),
+			"copies":                "1",
+		})
 
 	if err != nil {
 		http.Error(w, "error printing"+err.Error(), http.StatusInternalServerError)

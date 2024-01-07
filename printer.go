@@ -45,6 +45,7 @@ func PrintDocument(filename string, options map[string]string) error {
 	args = append(args, filename)
 
 	cmd := exec.Command("lp", args...)
+	// err is the output so maybe test this late TODO:
 	err := cmd.Run()
 	if err != nil {
 		fmt.Printf(err.Error())
