@@ -26,6 +26,9 @@ func main() {
 	http.HandleFunc("/upload", uploadHandler)
 	http.HandleFunc("/print", printDocumentHandler)
 
+	// pdf preview
+	http.HandleFunc("/pdfPreview", pdfPreviewHandler)
+
 	http.HandleFunc("/ping", pingHandler)
 
 	fmt.Println("listening at port 8080")

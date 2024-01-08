@@ -84,6 +84,13 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// convert to pdf
+	_, errpdf := processDocumentConvert(fileDest)
+	if errpdf != nil {
+		http.Error(w, "error processing document"+errpdf.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	fmt.Fprintf(w, "File uploaded successfully\n")
 
 	// Schedule file deletion after 30 minutes
@@ -133,14 +140,8 @@ func printDocumentHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "No file uploaded", http.StatusBadRequest)
 		return
 	}
-	// TODO: implement converting the document first
-	// TODO: move this convert process into the preview
-	pdfPath, errpdf := processDocumentConvert(fileDest)
-	if errpdf != nil {
-		http.Error(w, "error processing document"+errpdf.Error(), http.StatusInternalServerError)
-		return
 
-	}
+	pdfPath := recentPdf
 	docInfo, errInfo := getPdfData(pdfPath)
 	if errInfo != nil {
 		http.Error(w, "error processing document"+errInfo.Error(), http.StatusInternalServerError)
@@ -165,6 +166,13 @@ func printDocumentHandler(w http.ResponseWriter, r *http.Request) {
 	// delete file
 	// go scheduleFileDeletion(fileDest, 1)
 }
+
+func pdfPreviewHandler(w http.ResponseWriter, r *http.Request) {
+	// currentPath, _ := os.Executable()
+	fmt.Print(recentPdf)
+	http.ServeFile(w, r, recentPdf)
+}
+
 func pingHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "pong!")
 }
