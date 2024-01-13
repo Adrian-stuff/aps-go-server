@@ -7,7 +7,7 @@ import (
 
 	"periph.io/x/conn/v3/gpio"
 	"periph.io/x/host/v3"
-	"periph.io/x/host/v3/orangepi"
+	"periph.io/x/host/v3/allwinner"
 )
 
 func monitorPullout(pin gpio.PinIO, trigger chan<- bool) {
@@ -25,7 +25,7 @@ func main() {
 	}
 
 	// Open GPIO PA_12 with pull-up resistor
-	pin := orangepi.PA1_13
+	pin := allwinner.PA13
 	err := pin.In(gpio.PullUp, gpio.FallingEdge) // Note the use of orangepi.GPIO12
 	if err != nil {
 		fmt.Println("Error opening GPIO pin:", err)
@@ -45,7 +45,7 @@ func main() {
 			// Handle the pullout event here
 		default:
 			// Perform other tasks while waiting for trigger
-			time.Sleep(time.Second) // Adjust sleep time as needed
+			time.Sleep(time.Second * 0.5) // Adjust sleep time as needed
 		}
 	}
 }
