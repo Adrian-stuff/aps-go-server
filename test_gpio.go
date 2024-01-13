@@ -59,7 +59,7 @@ func main() {
 
 			pinState := pin.Read()
 
-			if pinState == gpio.Low {
+			if pinState == gpio.High {
 				counter++
 				time.Sleep(100 * time.Millisecond) // Delay for 0.1 seconds
 				fmt.Println("counter: ", counter)
