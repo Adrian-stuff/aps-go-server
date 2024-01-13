@@ -29,11 +29,20 @@ func main() {
 		fmt.Println("Error opening GPIO pin:", err)
 		return
 	}
-
+	count := 0
 	for {
-		pin.WaitForEdge(-1)
+		// pin.WaitForEdge(gpio.FallingEdge)
 		pinState := pin.Read()
-		fmt.Printf("%t \n", pinState)
+
+		fmt.Printf("count %d \n", count)
+
+		if pinState == gpio.High {
+			count++
+			fmt.Println("Pin is HIGH")
+		} else {
+			// fmt.Println("Pin is LOW")
+		}
+		// fmt.Printf("%t \n", pinState)
 	}
 	// Main loop
 	// for {
