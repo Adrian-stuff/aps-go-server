@@ -2,51 +2,76 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"time"
 
-	"periph.io/x/conn/v3/gpio"
 	"periph.io/x/host/v3"
-	"periph.io/x/host/v3/allwinner"
+	"periph.io/x/host/v3/gpio"
+	"periph.io/x/host/v3/orangepi"
 )
 
-func monitorPullout(pin gpio.PinIO, trigger chan<- gpio.Level) {
-	for {
-		pin.WaitForEdge(time.Second) // Wait for falling edge on the pin
-		trigger <- pin.Read()        // Send trigger signal to channel
-	}
-}
 func main() {
-	// Initialize the periph library
-	fmt.Println("run")
-
-	if _, err := host.Init(); err != nil {
-		log.Fatal(err)
+	// Initialize periph.io with Orange Pi One support
+	_, err := host.Init()
+	if err != nil {
+		fmt.Println("Error initializing periph.io:", err)
+		return
 	}
 
-	// Open GPIO PA_12 with pull-up resistor
-	pin := allwinner.PA13
-	err := pin.In(gpio.PullUp, gpio.FallingEdge) // Note the use of orangepi.GPIO12
+	// Ensure Orange Pi One support is loaded
+	if _, err := orangepi.Present(); err != nil {
+		fmt.Println("Error: Orange Pi One not supported by periph.io")
+		return
+	}
+
+	// Open GPIO PA_13 with pull-up resistor
+	pin, err := orangepi.PA13.In(gpio.PullUp)
 	if err != nil {
 		fmt.Println("Error opening GPIO pin:", err)
 		return
 	}
-	// Create channel for pullout triggers
-	triggerChan := make(chan gpio.Level)
 
-	// Launch goroutine for edge detection
-	go monitorPullout(pin, triggerChan)
-	count := 0
-	// Main program loop
+	// Main loop
 	for {
-		select {
-		case <-triggerChan:
-			count++
-			fmt.Printf("Pullout triggered! %t \n", count)
-			// Handle the pullout event here
-		default:
-			// Perform other tasks while waiting for trigger
-			time.Sleep(time.Second / 2) // Adjust sleep time as needed
+		isReading := true
+		counterTotal := 0
+		total := 0
+		value := 0
+		counter := 0
+
+		for isReading {
+			pinState, err := pin.Read()
+			if err != nil {
+				fmt.Println("Error reading pin state:", err)
+				continue // Skip to the next iteration if there's an error
+			}
+
+			if pinState == gpio.Low {
+				counter++
+				time.Sleep(100 * time.Millisecond) // Delay for 0.1 seconds
+				fmt.Println("counter: ", counter)
+
+				counterTotal = counter
+				if counterTotal == 1 || counterTotal == 3 || counterTotal == 5 {
+					isReading = false
+				}
+			}
 		}
+
+		if counterTotal == 1 || counterTotal == 3 {
+			value++ // Increment value directly (equivalent to value + 1)
+		} else if counterTotal == 5 {
+			value += 2 // Add 2 for counterTotal == 5
+		}
+
+		total += value
+
+		if total != 0 {
+			fmt.Println("total:", total)
+		}
+
+		// Reset variables for the next cycle
+		total = 0
+		value = 0
+		counter = 0
 	}
 }
