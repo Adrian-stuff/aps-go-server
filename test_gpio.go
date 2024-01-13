@@ -47,19 +47,19 @@ func main() {
 	// 	// fmt.Printf("%t \n", pinState)
 	// }
 	// Main loop
+	counterTotal := 0
+	total := 0
+	value := 0
+	counter := 0
+	isReading := true
 	for {
-		counterTotal := 0
-		total := 0
-		value := 0
-		counter := 0
-		isReading := true
 
 		for isReading {
 			// pin.WaitForEdge(-1)
 
 			pinState := pin.Read()
 
-			if pinState == gpio.High {
+			if pinState == gpio.Low {
 				counter++
 				time.Sleep(100 * time.Millisecond) // Delay for 0.1 seconds
 				fmt.Println("counter: ", counter)
@@ -72,9 +72,9 @@ func main() {
 		}
 
 		if counterTotal == 1 || counterTotal == 3 {
-			value++ // Increment value directly (equivalent to value + 1)
+			value = value + counterTotal/counterTotal
 		} else if counterTotal == 5 {
-			value += 2 // Add 2 for counterTotal == 5
+			value = value + counterTotal/counterTotal + 1
 		}
 
 		total += value
