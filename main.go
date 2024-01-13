@@ -31,6 +31,8 @@ func main() {
 
 	http.HandleFunc("/ping", pingHandler)
 
+	// websocket
+	http.HandleFunc("/ws", websocketHandler)
 	fmt.Println("listening at port 8080")
 	http.ListenAndServe(":8080", nil)
 }

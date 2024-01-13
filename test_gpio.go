@@ -9,7 +9,7 @@ import (
 	"periph.io/x/host/v3/allwinner"
 )
 
-func main() {
+func coin_slot() {
 	// Initialize periph.io with Orange Pi One support
 	_, err := host.Init()
 	if err != nil {
