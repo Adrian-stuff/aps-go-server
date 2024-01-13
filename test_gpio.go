@@ -12,8 +12,8 @@ import (
 
 func monitorPullout(pin gpio.PinIO, trigger chan<- bool) {
 	for {
-		pin.WaitForEdge(time.Second / 2) // Wait for falling edge on the pin
-		trigger <- true                  // Send trigger signal to channel
+		// pin.WaitForEdge(time.Second / 2) // Wait for falling edge on the pin
+		trigger <- bool(pin.Read()) // Send trigger signal to channel
 	}
 }
 func main() {
