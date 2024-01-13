@@ -24,7 +24,7 @@ func main() {
 
 	// Open GPIO PA_13 with pull-up resistor
 	pin := allwinner.PA13
-	errx := pin.In(gpio.PullUp, gpio.BothEdges)
+	errx := pin.In(gpio.PullUp, gpio.FallingEdge)
 	if errx != nil {
 		fmt.Println("Error opening GPIO pin:", err)
 		return
