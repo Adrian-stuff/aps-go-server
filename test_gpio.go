@@ -59,7 +59,7 @@ func main() {
 
 			pinState := pin.Read()
 
-			if pinState == gpio.Low {
+			if pinState == gpio.High {
 				counter++
 				time.Sleep(100 * time.Millisecond) // Delay for 0.1 seconds
 				fmt.Println("counter: ", counter)
@@ -72,9 +72,9 @@ func main() {
 		}
 
 		if counterTotal == 1 || counterTotal == 3 {
-			value = value + counterTotal/counterTotal
+			value += 1
 		} else if counterTotal == 5 {
-			value = value + counterTotal/counterTotal + 1
+			value += 2
 		}
 
 		total += value
@@ -84,8 +84,8 @@ func main() {
 		}
 
 		// Reset variables for the next cycle
-		// total = 0
-		// value = 0
+		total = 0
+		value = 0
 		counter = 0
 	}
 }
