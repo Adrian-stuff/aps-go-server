@@ -41,7 +41,7 @@ func main() {
 	for {
 		select {
 		case <-triggerChan:
-			fmt.Println("Pullout triggered!")
+			fmt.Println("Pullout triggered! %d", triggerChan)
 			// Handle the pullout event here
 		default:
 			// Perform other tasks while waiting for trigger
