@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"periph.io/x/conn/v3/gpio"
 	"periph.io/x/host/v3"
@@ -24,7 +25,7 @@ func main() {
 
 	// Open GPIO PA_13 with pull-up resistor
 	pin := allwinner.PA13
-	errx := pin.In(gpio.PullDown, gpio.FallingEdge)
+	errx := pin.In(gpio.PullDown, gpio.NoEdge)
 	if errx != nil {
 		fmt.Println("Error opening GPIO pin:", err)
 		return
@@ -42,6 +43,7 @@ func main() {
 		} else {
 			// fmt.Println("Pin is LOW")
 		}
+		time.Sleep(time.Millisecond * 100)
 		// fmt.Printf("%t \n", pinState)
 	}
 	// Main loop
