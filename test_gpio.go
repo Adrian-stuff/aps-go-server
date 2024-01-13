@@ -45,7 +45,7 @@ func main() {
 			// Handle the pullout event here
 		default:
 			// Perform other tasks while waiting for trigger
-			time.Sleep(time.Second * 0.5) // Adjust sleep time as needed
+			time.Sleep(time.Second / 2) // Adjust sleep time as needed
 		}
 	}
 }
