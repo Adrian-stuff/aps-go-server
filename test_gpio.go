@@ -26,7 +26,7 @@ func main() {
 
 	// Open GPIO PA_12 with pull-up resistor
 	pin := allwinner.PA13
-	err := pin.In(gpio.PullDown, gpio.FallingEdge) // Note the use of orangepi.GPIO12
+	err := pin.In(gpio.PullUp, gpio.FallingEdge) // Note the use of orangepi.GPIO12
 	if err != nil {
 		fmt.Println("Error opening GPIO pin:", err)
 		return
