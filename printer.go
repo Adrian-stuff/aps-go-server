@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-var defaultPrinter = "cups-pdf"
+var defaultPrinter = ""
 
 // GetAllPrintersUsingLp returns a list of all available printers from CUPS using the "lpstat -p" command.
 func GetAllPrinters() ([]string, error) {
@@ -36,6 +36,13 @@ func GetAllPrinters() ([]string, error) {
 //	}
 func PrintDocument(filename string, options map[string]string) error {
 	var args []string
+	if len(defaultPrinter) == 0 {
+		_, err := GetDefaultPrinter()
+		if err != nil {
+			fmt.Errorf(err.Error())
+		}
+	}
+
 	args = append(args, "-d", defaultPrinter)
 
 	for key, value := range options {
@@ -45,10 +52,12 @@ func PrintDocument(filename string, options map[string]string) error {
 	args = append(args, filename)
 
 	cmd := exec.Command("lp", args...)
-	// err is the output so maybe test this late TODO:
+	fmt.Println(args)
+	//TODO: err is the output so maybe test this later
+	// troubleshoot note: maybe the arguments are the one making the error
 	err := cmd.Run()
 	if err != nil {
-		fmt.Printf(err.Error())
+		fmt.Println(err.Error())
 		return fmt.Errorf("failed to print file: %s", err.Error())
 	}
 
@@ -57,7 +66,6 @@ func PrintDocument(filename string, options map[string]string) error {
 }
 
 func SetDefaultPrinter(printerName string) error {
-	defaultPrinter = printerName
 
 	cmd := exec.Command("lpoptions", "-d", printerName)
 	err := cmd.Run()
@@ -65,6 +73,7 @@ func SetDefaultPrinter(printerName string) error {
 		return fmt.Errorf("failed to set default printer: %w", err)
 
 	}
+	defaultPrinter = printerName
 	return nil
 }
 
@@ -78,7 +87,10 @@ func GetDefaultPrinter() (string, error) {
 	lines := strings.Split(string(output), "\n")
 	for _, line := range lines {
 		if strings.HasPrefix(line, "system default destination:") {
-			return strings.TrimSpace(strings.Fields(line)[3]), nil // Extract printer name
+			printerName := strings.TrimSpace(strings.Fields(line)[3])
+			defaultPrinter = printerName
+			return printerName, nil // Extract printer name
+
 		}
 	}
 
