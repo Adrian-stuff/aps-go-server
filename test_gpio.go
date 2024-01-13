@@ -32,7 +32,7 @@ func main() {
 	}
 	count := 0
 	for {
-		// pin.WaitForEdge(gpio.FallingEdge)
+		pin.WaitForEdge(-1)
 		pinState := pin.Read()
 
 		fmt.Printf("count %d \n", count)
