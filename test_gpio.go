@@ -10,10 +10,10 @@ import (
 	"periph.io/x/host/v3/allwinner"
 )
 
-func monitorPullout(pin gpio.PinIO, trigger chan<- bool) {
+func monitorPullout(pin gpio.PinIO, trigger chan<- gpio.Level) {
 	for {
 		// pin.WaitForEdge(time.Second / 2) // Wait for falling edge on the pin
-		trigger <- bool(pin.Read()) // Send trigger signal to channel
+		trigger <- pin.Read() // Send trigger signal to channel
 	}
 }
 func main() {
@@ -32,7 +32,7 @@ func main() {
 		return
 	}
 	// Create channel for pullout triggers
-	triggerChan := make(chan bool)
+	triggerChan := make(chan gpio.Level)
 
 	// Launch goroutine for edge detection
 	go monitorPullout(pin, triggerChan)
@@ -41,7 +41,7 @@ func main() {
 	for {
 		select {
 		case <-triggerChan:
-			fmt.Println("Pullout triggered! %d", triggerChan)
+			fmt.Println("Pullout triggered! %t", triggerChan)
 			// Handle the pullout event here
 		default:
 			// Perform other tasks while waiting for trigger
