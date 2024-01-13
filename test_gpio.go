@@ -84,8 +84,8 @@ func main() {
 		}
 
 		// Reset variables for the next cycle
-		total = 0
-		value = 0
+		// total = 0
+		// value = 0
 		counter = 0
 	}
 }
