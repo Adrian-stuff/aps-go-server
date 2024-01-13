@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
+	"periph.io/x/conn/v3/gpio"
 	"periph.io/x/host/v3"
-	"periph.io/x/host/v3/gpio"
-	"periph.io/x/host/v3/orangepi"
+	"periph.io/x/host/v3/allwinner"
 )
 
 func main() {
@@ -18,13 +18,14 @@ func main() {
 	}
 
 	// Ensure Orange Pi One support is loaded
-	if _, err := orangepi.Present(); err != nil {
-		fmt.Println("Error: Orange Pi One not supported by periph.io")
-		return
-	}
+	// if _, err := orangepi.Present(); err != nil {
+	// 	fmt.Println("Error: Orange Pi One not supported by periph.io")
+	// 	return
+	// }
 
 	// Open GPIO PA_13 with pull-up resistor
-	pin, err := orangepi.PA13.In(gpio.PullUp)
+	pin := allwinner.PA13
+	err = pin.In(gpio.PullUp, gpio.BothEdges)
 	if err != nil {
 		fmt.Println("Error opening GPIO pin:", err)
 		return
@@ -39,11 +40,7 @@ func main() {
 		counter := 0
 
 		for isReading {
-			pinState, err := pin.Read()
-			if err != nil {
-				fmt.Println("Error reading pin state:", err)
-				continue // Skip to the next iteration if there's an error
-			}
+			pinState := pin.Read()
 
 			if pinState == gpio.Low {
 				counter++
