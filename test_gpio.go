@@ -47,12 +47,12 @@ func main() {
 	// 	// fmt.Printf("%t \n", pinState)
 	// }
 	// Main loop
+	counterTotal := 0
+	total := 0
+	value := 0
+	counter := 0
+	isReading := true
 	for {
-		isReading := true
-		counterTotal := 0
-		total := 0
-		value := 0
-		counter := 0
 
 		for isReading {
 			// pin.WaitForEdge(-1)
