@@ -30,60 +30,62 @@ func main() {
 		fmt.Println("Error opening GPIO pin:", err)
 		return
 	}
-	count := 0
-	for {
-		pin.WaitForEdge(-1)
-		pinState := pin.Read()
-
-		fmt.Printf("count %d \n", count)
-
-		if pinState == gpio.High {
-			count++
-			fmt.Println("Pin is HIGH")
-		} else {
-			// fmt.Println("Pin is LOW")
-		}
-		time.Sleep(time.Millisecond * 100)
-		// fmt.Printf("%t \n", pinState)
-	}
-	// Main loop
+	// count := 0
 	// for {
-	// 	isReading := true
-	// 	counterTotal := 0
-	// 	total := 0
-	// 	value := 0
-	// 	counter := 0
+	// pin.WaitForEdge(-1)
+	// pinState := pin.Read()
 
-	// 	for isReading {
-	// 		pinState := pin.Read()
+	// 	fmt.Printf("count %d \n", count)
 
-	// 		if pinState == gpio.Low {
-	// 			counter++
-	// 			time.Sleep(100 * time.Millisecond) // Delay for 0.1 seconds
-	// 			fmt.Println("counter: ", counter)
-
-	// 			counterTotal = counter
-	// 			if counterTotal == 1 || counterTotal == 3 || counterTotal == 5 {
-	// 				isReading = false
-	// 			}
-	// 		}
+	// 	if pinState == gpio.High {
+	// 		count++
+	// 		fmt.Println("Pin is HIGH")
+	// 	} else {
+	// 		// fmt.Println("Pin is LOW")
 	// 	}
-
-	// 	if counterTotal == 1 || counterTotal == 3 {
-	// 		value++ // Increment value directly (equivalent to value + 1)
-	// 	} else if counterTotal == 5 {
-	// 		value += 2 // Add 2 for counterTotal == 5
-	// 	}
-
-	// 	total += value
-
-	// 	if total != 0 {
-	// 		fmt.Println("total:", total)
-	// 	}
-
-	// 	// Reset variables for the next cycle
-	// 	total = 0
-	// 	value = 0
-	// 	counter = 0
+	// 	time.Sleep(time.Millisecond * 100)
+	// 	// fmt.Printf("%t \n", pinState)
 	// }
+	// Main loop
+	for {
+		isReading := true
+		counterTotal := 0
+		total := 0
+		value := 0
+		counter := 0
+
+		for isReading {
+			pin.WaitForEdge(-1)
+
+			pinState := pin.Read()
+
+			if pinState == gpio.Low {
+				counter++
+				time.Sleep(100 * time.Millisecond) // Delay for 0.1 seconds
+				fmt.Println("counter: ", counter)
+
+				counterTotal = counter
+				if counterTotal == 1 || counterTotal == 3 || counterTotal == 5 {
+					isReading = false
+				}
+			}
+		}
+
+		if counterTotal == 1 || counterTotal == 3 {
+			value++ // Increment value directly (equivalent to value + 1)
+		} else if counterTotal == 5 {
+			value += 2 // Add 2 for counterTotal == 5
+		}
+
+		total += value
+
+		if total != 0 {
+			fmt.Println("total:", total)
+		}
+
+		// Reset variables for the next cycle
+		total = 0
+		value = 0
+		counter = 0
+	}
 }
