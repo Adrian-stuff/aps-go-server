@@ -50,7 +50,6 @@ func main() {
 	total := 0
 	value := 0
 	counter := 0
-	counterTotal := 0
 	for {
 		isReading := true
 
@@ -64,29 +63,22 @@ func main() {
 				time.Sleep(100 * time.Millisecond) // Delay for 0.1 seconds
 				fmt.Println("counter: ", counter)
 
-				counterTotal = counter
-				if counterTotal == 1 || counterTotal == 3 || counterTotal == 5 {
+				if counter == 1 || counter == 3 || counter == 5 { // Check for specific counts immediately
 					isReading = false
+
+					// Calculate and print total based on counter value
+					if counter == 1 || counter == 3 {
+						value = 1
+					} else { // Counter is 5
+						value = 2
+					}
+					total += value
+					fmt.Println("total:", total)
 				}
 			}
 		}
 
-		if counterTotal == 1 || counterTotal == 3 {
-			value += 1
-		}
-		if counterTotal == 5 {
-			value += 2
-		}
-
-		total += value
-
-		if total != 0 {
-			fmt.Println("total:", total)
-		}
-
-		// Reset variables for the next cycle
-		total = 0
-		value = 0
+		// Reset counter for the next cycle
 		counter = 0
 	}
 }
