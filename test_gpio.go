@@ -18,12 +18,14 @@ func monitorPullout(pin gpio.PinIO, trigger chan<- bool) {
 }
 func main() {
 	// Initialize the periph library
+	fmt.Println("run")
+
 	if _, err := host.Init(); err != nil {
 		log.Fatal(err)
 	}
 
 	// Open GPIO PA_12 with pull-up resistor
-	pin := orangepi.PA1_12
+	pin := orangepi.PA1_13
 	err := pin.In(gpio.PullUp, gpio.FallingEdge) // Note the use of orangepi.GPIO12
 	if err != nil {
 		fmt.Println("Error opening GPIO pin:", err)
