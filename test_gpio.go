@@ -17,12 +17,6 @@ func main() {
 		return
 	}
 
-	// Ensure Orange Pi One support is loaded
-	// if _, err := orangepi.Present(); err != nil {
-	// 	fmt.Println("Error: Orange Pi One not supported by periph.io")
-	// 	return
-	// }
-
 	// Open GPIO PA_13 with pull-up resistor
 	pin := allwinner.PA12
 	errx := pin.In(gpio.PullDown, gpio.NoEdge)
@@ -30,55 +24,48 @@ func main() {
 		fmt.Println("Error opening GPIO pin:", err)
 		return
 	}
-	// count := 0
-	// for {
-	// pin.WaitForEdge(-1)
-	// pinState := pin.Read()
+	totalChan := make(chan int)
+	go func() {
+		total := 0
+		value := 0
+		counter := 0
+		for {
+			isReading := true
 
-	// 	fmt.Printf("count %d \n", count)
+			for isReading {
+				// pin.WaitForEdge(-1)
 
-	// 	if pinState == gpio.High {
-	// 		count++
-	// 		fmt.Println("Pin is HIGH")
-	// 	} else {
-	// 		// fmt.Println("Pin is LOW")
-	// 	}
-	// 	time.Sleep(time.Millisecond * 100)
-	// 	// fmt.Printf("%t \n", pinState)
-	// }
-	// Main loop
-	total := 0
-	value := 0
-	counter := 0
-	for {
-		isReading := true
+				pinState := pin.Read()
 
-		for isReading {
-			// pin.WaitForEdge(-1)
+				if pinState == gpio.Low {
+					counter++
+					time.Sleep(100 * time.Millisecond) // Delay for 0.1 seconds
+					// fmt.Println("counter: ", counter)
 
-			pinState := pin.Read()
+					if counter == 1 || counter == 3 || counter == 5 { // Check for specific counts immediately
+						isReading = false
 
-			if pinState == gpio.Low {
-				counter++
-				time.Sleep(100 * time.Millisecond) // Delay for 0.1 seconds
-				fmt.Println("counter: ", counter)
-
-				if counter == 1 || counter == 3 || counter == 5 { // Check for specific counts immediately
-					isReading = false
-
-					// Calculate and print total based on counter value
-					if counter == 1 || counter == 3 {
-						value = 1
-					} else { // Counter is 5
-						value = 2
+						// Calculate and print total based on counter value
+						if counter == 1 || counter == 3 {
+							value = 1
+						} else { // Counter is 5
+							value = 2
+						}
+						total += value
+						// fmt.Println("total:", total)
+						totalChan <- total
 					}
-					total += value
-					fmt.Println("total:", total)
 				}
 			}
-		}
 
-		// Reset counter for the next cycle
-		counter = 0
+			// Reset counter for the next cycle
+			counter = 0
+		}
+	}()
+	for {
+		select {
+		case <-totalChan:
+			fmt.Printf("total: %d", totalChan)
+		}
 	}
 }
