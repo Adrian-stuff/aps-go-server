@@ -65,7 +65,7 @@ func main() {
 	for {
 		select {
 		case <-totalChan:
-			fmt.Printf("total: %d", totalChan)
+			fmt.Printf("total: %d", <-totalChan)
 		}
 	}
 }
