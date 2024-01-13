@@ -62,10 +62,11 @@ func main() {
 			counter = 0
 		}
 	}()
-	for {
-		select {
-		case <-totalChan:
-			fmt.Printf("total: %d", <-totalChan)
-		}
+	// for {
+	select {
+	case <-totalChan:
+		fmt.Printf("total: %d", <-totalChan)
 	}
 }
+
+// }
