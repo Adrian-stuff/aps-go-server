@@ -25,7 +25,7 @@ func main() {
 
 	// Open GPIO PA_13 with pull-up resistor
 	pin := allwinner.PA12
-	errx := pin.In(gpio.PullDown, gpio.NoEdge)
+	errx := pin.In(gpio.PullUp, gpio.FallingEdge)
 	if errx != nil {
 		fmt.Println("Error opening GPIO pin:", err)
 		return
@@ -47,11 +47,11 @@ func main() {
 	// 	// fmt.Printf("%t \n", pinState)
 	// }
 	// Main loop
+	total := 0
+	value := 0
+	counter := 0
+	counterTotal := 0
 	for {
-		counterTotal := 0
-		total := 0
-		value := 0
-		counter := 0
 		isReading := true
 
 		for isReading {
@@ -73,7 +73,8 @@ func main() {
 
 		if counterTotal == 1 || counterTotal == 3 {
 			value += 1
-		} else if counterTotal == 5 {
+		}
+		if counterTotal == 5 {
 			value += 2
 		}
 
