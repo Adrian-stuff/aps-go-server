@@ -36,12 +36,13 @@ func main() {
 
 	// Launch goroutine for edge detection
 	go monitorPullout(pin, triggerChan)
-
+	count := 0
 	// Main program loop
 	for {
 		select {
 		case <-triggerChan:
-			fmt.Printf("Pullout triggered! %t \n", triggerChan)
+			count++
+			fmt.Printf("Pullout triggered! %t \n", count)
 			// Handle the pullout event here
 		default:
 			// Perform other tasks while waiting for trigger
