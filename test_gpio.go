@@ -55,7 +55,7 @@ func main() {
 		counter := 0
 
 		for isReading {
-			pin.WaitForEdge(-1)
+			// pin.WaitForEdge(-1)
 
 			pinState := pin.Read()
 
