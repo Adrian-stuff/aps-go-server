@@ -91,9 +91,9 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	docInfo, errInfo := getPdfData(fileDest)
+	docInfo, errInfo := getPdfData(recentPdf)
 	if errInfo != nil {
-		http.Error(w, "error processing document"+errInfo.Error(), http.StatusInternalServerError)
+		http.Error(w, "error getting pdf Data"+errInfo.Error(), http.StatusInternalServerError)
 		return
 	}
 
