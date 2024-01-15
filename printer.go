@@ -46,7 +46,7 @@ func PrintDocument(filename string, options map[string]string) error {
 	args = append(args, "-d", defaultPrinter)
 
 	for key, value := range options {
-		args = append(args, fmt.Sprintf("-o%s=%s", key, value))
+		args = append(args, fmt.Sprintf("-o %s=%s", key, value))
 	}
 
 	args = append(args, filename)
