@@ -17,7 +17,6 @@ func processDocumentConvert(filePath string) (string, error) {
 		// convert to pdf
 		pdfPath, err := ConvertToPdf(filePath)
 		if err != nil {
-			fmt.Errorf("error converting pdf", err)
 			return "", err
 		}
 

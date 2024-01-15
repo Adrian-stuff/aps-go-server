@@ -174,16 +174,14 @@ func printDocumentHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	errPrint := PrintDocument(pdfPath,
+	if err := PrintDocument(pdfPath,
 		map[string]string{
 			"orientation-requested": fmt.Sprint(customParams.Orientation),
 			"media":                 customParams.Paper,
 			"pages-ranges":          customParams.Pages,
 			"copies":                fmt.Sprint(customParams.Copies),
-		})
-
-	if errPrint != nil {
-		http.Error(w, "error printing"+errPrint.Error(), http.StatusInternalServerError)
+		}); err != nil {
+		http.Error(w, "error printing"+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
