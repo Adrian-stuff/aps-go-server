@@ -157,6 +157,10 @@ func printDocumentHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if r.Body == http.NoBody {
+		http.Error(w, "no params", http.StatusBadRequest)
+		return
+	}
 	pdfPath := recentPdf
 
 	// parse custom config
@@ -166,11 +170,7 @@ func printDocumentHandler(w http.ResponseWriter, r *http.Request) {
 	err := decoder.Decode(&customParams)
 	if err != nil {
 		fmt.Print(err)
-		http.Error(w, "error decoding json", http.StatusInternalServerError)
-		return
-	}
-	if customParams == (PrintParams{}) {
-		http.Error(w, "no params", http.StatusBadRequest)
+		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
 
