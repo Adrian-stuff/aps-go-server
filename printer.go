@@ -39,7 +39,7 @@ func PrintDocument(filename string, options map[string]string) error {
 	if len(defaultPrinter) == 0 {
 		_, err := GetDefaultPrinter()
 		if err != nil {
-			fmt.Errorf(err.Error())
+			return fmt.Errorf("failed getting default printer: %s", err.Error())
 		}
 	}
 

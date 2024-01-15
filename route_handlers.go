@@ -183,7 +183,7 @@ func printDocumentHandler(w http.ResponseWriter, r *http.Request) {
 		})
 
 	if errPrint != nil {
-		http.Error(w, "error printing"+err.Error(), http.StatusInternalServerError)
+		http.Error(w, "error printing"+errPrint.Error(), http.StatusInternalServerError)
 		return
 	}
 
