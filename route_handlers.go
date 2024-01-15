@@ -91,8 +91,16 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "File uploaded successfully\n")
+	docInfo, errInfo := getPdfData(fileDest)
+	if errInfo != nil {
+		http.Error(w, "error processing document"+errInfo.Error(), http.StatusInternalServerError)
+		return
+	}
 
+	// return docInfo to the user
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(docInfo)
+	// fmt.Fprintf(w, "File uploaded successfully\n")
 	// Schedule file deletion after 30 minutes
 	go scheduleFileDeletion(destPath, 5*time.Minute)
 }
@@ -131,6 +139,14 @@ func getDefaultPrinterHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "default printer: %s", printerName)
 }
 
+type PrintParams struct {
+	Paper       string
+	Orientation int
+	// orientation refer to document info
+	Pages  string
+	Copies int
+}
+
 func printDocumentHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -142,21 +158,31 @@ func printDocumentHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	pdfPath := recentPdf
-	docInfo, errInfo := getPdfData(pdfPath)
-	if errInfo != nil {
-		http.Error(w, "error processing document"+errInfo.Error(), http.StatusInternalServerError)
+
+	// parse custom config
+	decoder := json.NewDecoder(r.Body)
+	var customParams PrintParams
+
+	err := decoder.Decode(&customParams)
+	if err != nil {
+		fmt.Print(err)
+		http.Error(w, "error decoding json", http.StatusInternalServerError)
 		return
 	}
-	// TODO: implement custom config
-	err := PrintDocument(pdfPath,
+	if customParams == (PrintParams{}) {
+		http.Error(w, "no params", http.StatusBadRequest)
+		return
+	}
+
+	errPrint := PrintDocument(pdfPath,
 		map[string]string{
-			"orientation-requested": fmt.Sprint(docInfo.Orientation),
-			"media":                 docInfo.Paper,
-			"pages-ranges":          fmt.Sprintf("1-%d", docInfo.Pages),
-			"copies":                "1",
+			"orientation-requested": fmt.Sprint(customParams.Orientation),
+			"media":                 customParams.Paper,
+			"pages-ranges":          customParams.Pages,
+			"copies":                fmt.Sprint(customParams.Copies),
 		})
 
-	if err != nil {
+	if errPrint != nil {
 		http.Error(w, "error printing"+err.Error(), http.StatusInternalServerError)
 		return
 	}
